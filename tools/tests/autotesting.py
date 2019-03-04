@@ -6,9 +6,8 @@ def run(exe, inputfunc, timeout=1, tests=10):
 
     for i in range(1, tests+1):
         give, expect = inputfunc(i)
-        timep = time.perf_counter()
-
         print("[%02d/%02d] " % (i, tests), end='', flush=True)
+        timep = time.perf_counter()
 
         try:
             proc = subprocess.run(
@@ -25,6 +24,7 @@ def run(exe, inputfunc, timeout=1, tests=10):
         except subprocess.CalledProcessError as e:
             print('FAIL')
             print("Process '%s' returned non-zero exit status %d" % (e.cmd, e.returncode))
+            print(e.stdout.decode('utf-8'))
             print(e.stderr.decode('utf-8'))
             return
 
