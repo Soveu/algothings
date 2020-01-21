@@ -3,6 +3,7 @@
 #include <utility>
 #include <vector>
 #include <set>
+#include <stdint.h>
 
 struct Edge {
   int to;
@@ -11,10 +12,10 @@ struct Edge {
 
 using Graph = std::vector<std::vector<Edge>>;
 
-int dijkstra(const Graph& g, int source, int target) {
-  std::vector<int> distances(g.size(), std::numeric_limits<int>::max());
+std::vector<int> dijkstra(const Graph& g, int source, int target) {
+  std::vector<int64_t> distances(g.size(), std::numeric_limits<int64_t>::max());
   std::vector<int> prev(g.size());
-  std::set<std::pair<int, int>> activeVertices;
+  std::set<std::pair<int64_t, int>> activeVertices;
 
   distances[source] = 0;
   activeVertices.emplace(0, source);
@@ -22,11 +23,7 @@ int dijkstra(const Graph& g, int source, int target) {
   while(!activeVertices.empty()) {
     int where = activeVertices.begin()->second;
     if(where == target) {
-      for(const auto& x : prev) {
-        std::cout << x << ' ';
-      }
-      std::cout << std::endl;
-      return distances[where];
+      return prev;
     }
 
     activeVertices.erase(activeVertices.begin());
@@ -41,7 +38,7 @@ int dijkstra(const Graph& g, int source, int target) {
     }
   }
 
-  return std::numeric_limits<int>::max();
+  return prev;
 }
 
 int main() {
@@ -59,7 +56,34 @@ int main() {
     g[to].push_back(Edge{from, weight});
   }
 
-  std::cout << dijkstra(g, 1, noofnodes) << '\n';
+  auto prev = dijkstra(g, 1, noofnodes);
+  if(prev.size() == 0) {
+    std::cout << "-1\n";
+    return 0;
+  }
+
+  auto u = noofnodes;
+  if(prev[u] == 0 && u != 1) {
+    std::cout << "-1\n";
+    return 0;
+  }
+
+  std::vector<int> ans;
+  while(u != 0) {
+    ans.push_back(u);
+    u = prev[u];
+  }
+  
+  if(ans.back() != 1) {
+    std::cout << "-1\n";
+    return 0;
+  }
+
+  for(auto it=ans.rbegin(); it != ans.rend(); ++it) {
+    std::cout << *it << ' ';
+  }
+  std::cout << '\n';
+
   return 0;
 }
 

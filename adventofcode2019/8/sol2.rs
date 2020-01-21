@@ -24,16 +24,14 @@ fn main() {
     }
 
     for row in image.chunks(IMG_WIDTH) {
-        let mut rowimg = String::with_capacity(IMG_WIDTH);
         for x in row {
-            let c = match x {
-                48 => '.',
-                49 => '#',
-                _  => ' ',
-            };
-            rowimg.push(c);
+            if *x == b'1' {
+                print!("█");
+            } else {
+                print!(" ");
+            }
         }
-        println!("{}", rowimg);
+        print!("\n");
     }
 }
 
